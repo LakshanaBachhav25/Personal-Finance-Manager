@@ -6,20 +6,14 @@ import userRoutes from "./routes/userRoutes.js";
 import expenseRoutes from "./routes/expenseRouter.js";
 import transactionRoutes from "./routes/transactionRouter.js"
 
-
 dotenv.config();
-
-
 connectDB();
-
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-
 app.use(express.json());
 app.use(cors());
-
 
 app.use("/api/users", userRoutes);
 app.use("/api/expenses", expenseRoutes);
@@ -38,17 +32,14 @@ app.delete("/api/expenses/:id", async (req, res) => {
   }
 });
 
-
 app.get("/", (req, res) => {
   res.send("Server is Running & MongoDB is Connected!");
 });
-
 
 app.use((err, req, res, next) => {
   console.error("Backend Error:", err);
   res.status(500).json({ error: "Internal Server Error" });
 });
-
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -38,7 +38,7 @@ export const getExpenses = async (req, res) => {
 export const deleteExpense = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Received DELETE request for ID:", id); // Debugging line
+    console.log("Received DELETE request for ID:", id); 
 
     const deletedExpense = await Expense.findByIdAndDelete(id);
 
