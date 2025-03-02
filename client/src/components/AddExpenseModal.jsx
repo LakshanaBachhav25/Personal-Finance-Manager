@@ -1,28 +1,44 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { addExpense } from "../services/api"; 
 
 const AddExpenseModal = ({ show, handleClose }) => {
   const [expense, setExpense] = useState({
     title: "",
     amount: "",
     category: "",
-    type: "Expense",
+    type: "expense", 
     date: "",
     description: "",
   });
+
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     setExpense({ ...expense, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Expense Added:", expense);
-    handleClose();
+    try {
+      const formattedExpense = {
+        ...expense,
+        amount: parseFloat(expense.amount),
+        type: expense.type.toLowerCase(), 
+      };
+      const data = await addExpense(formattedExpense);
+      console.log("Expense Added:", data);
+      alert("Transaction Added Successfully!");
+      setExpense({ title: "", amount: "", category: "", type: "expense", date: "", description: "" }); 
+      handleClose();
+    } catch (err) {
+      setError(err.error || "Failed to add expense");
+    }
   };
 
   return (
     <>
+      {error && <p className="text-danger">{error}</p>}
       {show && <div className="modal-backdrop fade show"></div>}
       <div className={`modal ${show ? "d-block" : "d-none"}`} tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered">
@@ -58,8 +74,8 @@ const AddExpenseModal = ({ show, handleClose }) => {
                 <div className="mb-3">
                   <label className="form-label">Type</label>
                   <select name="type" className="form-select" value={expense.type} onChange={handleChange}>
-                    <option>Income</option>
-                    <option>Expense</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
                   </select>
                 </div>
 

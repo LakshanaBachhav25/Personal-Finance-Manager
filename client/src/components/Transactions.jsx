@@ -1,34 +1,46 @@
-import React, { useState } from "react";
-import { Table, Button, Container, Form } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Table, Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import NavbarComponent from "./NavbarComponent";
+import { getExpenses, deleteExpense } from "../services/api";
+import EditFormModel from "./EditFormModel";
+
 
 const Transactions = () => {
   const navigate = useNavigate();
-  const [transactionType, setTransactionType] = useState("Income");
+  const [transactionType, setTransactionType] = useState("all");
   const [filter, setFilter] = useState("all");
-  const [transactions, setTransactions] = useState([
-    { id: 1, title: "Salary", amount: 5000, category: "Other", type: "Income", date: "2025-02-20", description: "Monthly salary" },
-    { id: 2, title: "Grocery", amount: 200, category: "Food", type: "Expense", date: "2025-02-21", description: "Bought vegetables" },
-    { id: 3, title: "Fuel", amount: 100, category: "Transport", type: "Expense", date: "2025-02-19", description: "Car fuel" },
-  ]);
+  const [transactions, setTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
-  const handleLogout = () => {
-    console.log("User Logged Out");
-    navigate("/");
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [transactions, transactionType, filter]);
+
+  const fetchTransactions = async () => {
+    const data = await getExpenses();
+    if (!data.error) {
+      setTransactions(data);
+    } else {
+      console.error("Error fetching transactions:", data.error);
+    }
   };
-
-  const handleDelete = (id) => {
-    setTransactions(transactions.filter((transaction) => transaction.id !== id));
-  };
-
-  const handleEdit = (id) => {
-    alert(`Edit transaction with ID: ${id}`);
-  };
-
-  const filterTransactions = (transactions) => {
+  const applyFilters = () => {
+    let filteredData = [...transactions];
+  
+    if (transactionType !== "all") {
+      filteredData = filteredData.filter((t) => t.type.toLowerCase() === transactionType.toLowerCase());
+    }
+  
     const now = new Date();
-    return transactions.filter((t) => {
+    filteredData = filteredData.filter((t) => {
       const transactionDate = new Date(t.date);
       if (filter === "lastWeek") {
         const lastWeek = new Date();
@@ -41,30 +53,84 @@ const Transactions = () => {
       }
       return true;
     });
+  
+    
+    filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+    setFilteredTransactions(filteredData);
   };
+  
+  
+
+  const handleLogout = () => {
+    console.log("User Logged Out");
+    navigate("/");
+  };
+
+const handleDelete = async (id) => {
+  console.log(`Deleting expense ID: ${id}`);
+  console.log(`API Endpoint: http://localhost:5000/api/expenses/${id}`);
+
+  const response = await deleteExpense(id);
+  if (!response.error) {
+    setTransactions(transactions.filter((t) => t._id !== id));
+  } else {
+    console.error("Failed to delete transaction:", response.error);
+  }
+};
+
+const handleEdit = (transaction) => {
+  setSelectedTransaction(transaction); // Store selected transaction
+  setShowModal(true); // Show modal
+};
+
+const handleUpdate = async (transactionId, updatedData) => {
+  try {
+      console.log("Sending Expense ID:", transactionId); // Debugging ✅
+
+      const response = await fetch(`http://localhost:5000/api/transactions/${transactionId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedData),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+          throw new Error(result.error || "Failed to update transaction");
+      }
+
+      console.log("Transaction updated:", result);
+  } catch (error) {
+      console.error("Error updating transaction:", error);
+  }
+};
+
+
+
+
+
 
   return (
     <>
       <NavbarComponent handleLogout={handleLogout} />
       <Container>
-        <h3 className="text-center my-4 fw-bold" style={{ color: "#6f42c1" }} >"View and manage all your Transactions easily!"</h3>
+        <h3 className="text-center my-4 fw-bold" style={{ color: "#6f42c1" }}>"View and manage all your Transactions easily!"</h3>
 
         <div className="d-flex justify-content-center mb-4 mt-4">
-          <Button variant={transactionType === "Income" ? "success" : "outline-success"} className="me-2 fw-bold" onClick={() => setTransactionType("Income")}>
-            Show Income
-          </Button>
-          <Button variant={transactionType === "Expense" ? "primary" : "outline-primary"} className="me-2 fw-bold" onClick={() => setTransactionType("Expense")}>
-            Show Expenses
-          </Button>
+          {/* Transaction Type Filter */}
+          <select className="form-select w-auto me-2 fw-bold" onChange={(e) => setTransactionType(e.target.value)}>
+            <option value="all">Show All</option>
+            <option value="Income">Show Income</option>
+            <option value="Expense">Show Expenses</option>
+          </select>
 
-          <select className="form-select w-auto outline-secondary fw-bold" onChange={(e) => setFilter(e.target.value)}>
-            <option value="all">Transactions</option>
+          {/* Date Filter */}
+          <select className="form-select w-auto fw-bold" onChange={(e) => setFilter(e.target.value)}>
+            <option value="all">All Transactions</option>
             <option value="lastWeek">Last Week</option>
             <option value="lastMonth">Last Month</option>
           </select>
-
         </div>
-
 
         <Table>
           <thead className="table-dark">
@@ -79,24 +145,31 @@ const Transactions = () => {
             </tr>
           </thead>
           <tbody>
-            {filterTransactions(transactions)
-              .filter((t) => t.type === transactionType)
-              .map((t) => (
-                <tr key={t.id}>
-                  <td>{t.title}</td>
-                  <td>${t.amount}</td>
-                  <td>{t.category}</td>
-                  <td>{t.type}</td>
-                  <td>{t.date}</td>
-                  <td>{t.description}</td>
-                  <td>
-                    <Button variant="warning" size="sm" onClick={() => handleEdit(t.id)}>Edit</Button>{" "}
-                    <Button variant="danger" size="sm" onClick={() => handleDelete(t.id)}>Delete</Button>
-                  </td>
-                </tr>
-              ))}
+            {filteredTransactions.map((t) => (
+              <tr key={t._id}>
+                <td>{t.title}</td>
+                <td>${t.amount}</td>
+                <td>{t.category}</td>
+                <td>{t.type}</td>
+                <td>{t.date}</td>
+                <td>{t.description}</td>
+                <td>
+                 <Button variant="warning" size="sm" onClick={() => handleEdit(t)}>Edit</Button>
+                  <Button variant="danger" size="sm" onClick={() => handleDelete(t._id)}>Delete</Button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
+        <EditFormModel
+        showModal={showModal}
+        selectedTransaction={selectedTransaction}
+        setSelectedTransaction={setSelectedTransaction}
+        handleUpdate={handleUpdate}
+        setShowModal={setShowModal}
+      />
+
+
       </Container>
     </>
   );

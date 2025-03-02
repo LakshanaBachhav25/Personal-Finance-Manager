@@ -9,7 +9,7 @@ const Reports = () => {
     console.log("User Logged Out");
     navigate("/");
   }
-  // Sample data
+  
   const categoryData = [
     { name: "Food", value: 400 },
     { name: "Transport", value: 300 },
@@ -36,7 +36,7 @@ const Reports = () => {
         <div className="container d-flex justify-content-center align-items-center mt-4">
           <div className="row w-100">
 
-            {/* Income vs Expense Bar Chart */}
+            
             <div className="col-md-6 d-flex justify-content-center fw-bold">
               <ResponsiveContainer width={400} height={300}>
                 <BarChart data={incomeExpenseData}>
@@ -50,7 +50,7 @@ const Reports = () => {
               </ResponsiveContainer>
             </div>
 
-            {/* Category-wise Spending Pie Chart */}
+           
             <div className="col-md-6 d-flex justify-content-center fw-bold">
               <ResponsiveContainer width={400} height={400}>
                 <PieChart>

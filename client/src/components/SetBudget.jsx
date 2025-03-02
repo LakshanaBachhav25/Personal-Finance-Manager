@@ -42,7 +42,7 @@ const SetBudget = () => {
           "Set your budget here and take control of your expenses!"
         </h3>
 
-        {/* Budget Input Form */}
+       
         <div className="d-flex mb-4">
           <select
             className="form-select me-2 fw-bold"
@@ -64,7 +64,7 @@ const SetBudget = () => {
           <button className="btn btn-primary" onClick={handleSetBudget}>Set Budget</button>
         </div>
 
-        {/* Budget List */}
+        
         <table className="table table-striped table-bordered">
           <thead>
             <tr>
