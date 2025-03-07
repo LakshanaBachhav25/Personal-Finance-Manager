@@ -9,7 +9,6 @@ import Transactions from "./components/Transactions";
 import Reports from "./components/Reports";
 import SetBudget from "./components/SetBudget";
 
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   

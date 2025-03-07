@@ -7,8 +7,6 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh -->
 
-In this Personal Finance Manager project, frontend code is inside the client folder & backend code is inside server folder.
+Project Description :
 
-In my MERN stack project, Personal Finance Manager, users can register and log in. Registration data is stored in MongoDB, while login credentials are verified for authentication. After logging in, users are redirected to the home page, where they can add transactions using the "Add Transaction" button. All transactions are saved in the database and displayed on the User Interface in a table format with sorting functionality. Users can filter transactions by "All", "Expenses", or "Income". The system also allows users to delete transactions or edit them, updating the information in MongoDB after saving. Additionally, users can set a budget and view financial reports for better expense management.
-
- 
+This Personal Finance Manager Project allows users to register and log in using email and password, displaying the logged-in user's name on their profile icon. On the home page, users can add transactions, and the system calculates and displays the total balance, total expenses, and total income. The transactions section includes a table where users can filter transactions by All, Expenses, and Income, with additional filters for All Transactions, Last Week, and Last Month. In the reports section, an Income vs. Expense bar graph and a category-wise expense pie chart are displayed, both filterable by All, Last Week, and Last Month. The budgets section enables users to set budgets for expense categories and list future payments to control spending.

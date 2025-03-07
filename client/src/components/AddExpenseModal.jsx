@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { addExpense } from "../services/api"; 
+import { addExpense } from "../services/api";
 
-const AddExpenseModal = ({ show, handleClose }) => {
+const AddExpenseModal = ({ show, handleClose, fetchTransactions }) => {
   const [expense, setExpense] = useState({
     title: "",
     amount: "",
     category: "",
-    type: "expense", 
+    type: "expense",
     date: "",
     description: "",
   });
@@ -20,19 +20,33 @@ const AddExpenseModal = ({ show, handleClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+
     try {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        setError("User not authenticated");
+        alert("User not authenticated!");
+        return;
+      }
+
       const formattedExpense = {
         ...expense,
         amount: parseFloat(expense.amount),
-        type: expense.type.toLowerCase(), 
+        type: expense.type.toLowerCase(),
+        userId,
       };
-      const data = await addExpense(formattedExpense);
-      console.log("Expense Added:", data);
+
+      await addExpense(formattedExpense);
       alert("Transaction Added Successfully!");
-      setExpense({ title: "", amount: "", category: "", type: "expense", date: "", description: "" }); 
+
+      setExpense({ title: "", amount: "", category: "", type: "expense", date: "", description: "" });
       handleClose();
+      fetchTransactions();
     } catch (err) {
-      setError(err.error || "Failed to add expense");
+      const errorMessage = err.response?.data?.error || "Failed to add expense";
+      setError(errorMessage);
+      alert(errorMessage);
     }
   };
 
@@ -89,9 +103,8 @@ const AddExpenseModal = ({ show, handleClose }) => {
                   <textarea name="description" className="form-control" rows="3" value={expense.description} onChange={handleChange}></textarea>
                 </div>
 
-                <div className="d-flex justify-content-between">
+                <div className="d-flex">
                   <button type="submit" className="btn btn-success">Add Expense</button>
-                  <button type="button" className="btn btn-secondary" onClick={handleClose}>Close</button>
                 </div>
               </form>
             </div>
