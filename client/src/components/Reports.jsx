@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from "react";
+import Nav from "./Nav";
+import Sidebar from "./Sidebar";
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
+  PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer
 } from "recharts";
-import NavbarComponent from "./NavbarComponent";
 import axios from "axios";
 import moment from "moment";
 
@@ -21,6 +12,7 @@ const Reports = () => {
   const [transactions, setTransactions] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     fetchTransactions();
@@ -45,24 +37,19 @@ const Reports = () => {
     }
   };
 
-
   const filterTransactions = (data) => {
     if (timeFilter === "all") return data;
-
     const now = moment();
     return data.filter((t) => {
       const transactionDate = moment(t.date);
-      if (timeFilter === "weekly")
-        return transactionDate.isSameOrAfter(now.clone().subtract(7, "days"));
-      if (timeFilter === "monthly")
-        return transactionDate.isSameOrAfter(now.clone().subtract(1, "month"));
+      if (timeFilter === "weekly") return transactionDate.isSameOrAfter(now.clone().subtract(7, "days"));
+      if (timeFilter === "monthly") return transactionDate.isSameOrAfter(now.clone().subtract(1, "month"));
       return true;
     });
   };
 
   const processCategoryData = () => {
     let filteredTransactions = filterTransactions(transactions);
-
     let categories = filteredTransactions
       .filter((t) => t?.type?.toLowerCase() === "expense")
       .reduce((acc, curr) => {
@@ -79,17 +66,15 @@ const Reports = () => {
     if (categories.length === 0) {
       categories = [{ name: "Other", value: 1 }];
     }
-
     setCategoryData(categories);
   };
-
 
   const processBarChartData = () => {
     let filteredTransactions = filterTransactions(transactions);
     let groupedData = {};
 
     filteredTransactions.forEach(({ date, amount, type }) => {
-      if (!date || !amount || !type) return; // Skip invalid data
+      if (!date || !amount || !type) return;
 
       let monthName = moment(date).format("MMM");
       if (!groupedData[monthName]) {
@@ -106,56 +91,51 @@ const Reports = () => {
     setBarChartData(Object.values(groupedData));
   };
 
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28DFF"];
-
   return (
     <>
-      <NavbarComponent />
-      <div className="container-fluid bg-white vh-90 overflow-hidden">
-        <div className="container mt-4 d-flex justify-content-center align-items-center">
-          <h3 className="text-center mb-4 w-100 fw-bold" style={{ color: "#6f42c1" }}>
+      <Sidebar setSidebarOpen={setSidebarOpen} />
+      <div
+        className="content p-3"
+        style={{ marginLeft: "250px" }}
+      >
+        <Nav handleLogout={() => navigate("/")} />
+        <div className="container-fluid bg-white vh-90 overflow-hidden">
+          <h3 className="text-center mb-4 my-4 fw-bold" style={{ color: "#6f42c1" }}>
             View Clear Financial Reports Easily!
           </h3>
-        </div>
 
-        <div className="d-flex justify-content-center mb-3">
-          <select
-            className="form-select w-auto fw-bold"
-            value={timeFilter}
-            onChange={(e) => setTimeFilter(e.target.value)}
-          >
-            <option value="all">All Transactions</option>
-            <option value="weekly">Last Week</option>
-            <option value="monthly">Last Month</option>
-          </select>
-        </div>
+          <div className="d-flex justify-content-center mb-3">
+            <select className="form-select w-auto fw-bold" value={timeFilter} onChange={(e) => setTimeFilter(e.target.value)}>
+              <option value="all">All Transactions</option>
+              <option value="weekly">Last Week</option>
+              <option value="monthly">Last Month</option>
+            </select>
+          </div>
 
-        <div className="container d-flex justify-content-center align-items-center mt-4">
-          <div className="row w-100">
-            <div className="col-md-6 d-flex flex-column align-items-center fw-bold">
-              <h5 className="fw-bold">Bar Chart</h5>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={barChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="income" fill="#28A745" />
-                  <Bar dataKey="expense" fill="#DC3545" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          <div className="container d-flex justify-content-center align-items-center mt-4">
+            <div className="row w-100">
+              <div className="col-md-6 d-flex flex-column align-items-center fw-bold">
+                <h5 className="fw-bold">Bar Chart</h5>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={barChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="income" fill="#28A745" />
+                    <Bar dataKey="expense" fill="#DC3545" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
 
-            <div className="col-md-6 d-flex flex-column align-items-center">
-              <h5 className="fw-bold">Pie Chart</h5>
-              <div className="d-flex justify-content-center fw-bold">
+              <div className="col-md-6 d-flex flex-column align-items-center">
+                <h5 className="fw-bold">Pie Chart</h5>
                 <ResponsiveContainer width={400} height={400}>
-                  <PieChart>
+                  <PieChart className="fw-bold">
                     <Pie data={categoryData} cx="50%" cy="53%" outerRadius={143} fill="#8884d8" dataKey="value" label>
                       {categoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28DFF"][index % 5]} />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -172,4 +152,3 @@ const Reports = () => {
 };
 
 export default Reports;
-

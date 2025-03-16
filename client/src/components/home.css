@@ -1,12 +1,10 @@
 .custom-nav {
   color: black !important;
   font-weight: bold;
-  transition: font-size 0.1s ease-in-out;
+  font-size: 1.0rem;
+  /* transition: font-size 0.1s ease-in-out; */
 }
 
-.custom-nav:hover {
-  font-size: 1.1rem;
-}
 
 .income-container {
   min-height: 100vh;
@@ -27,3 +25,16 @@
 * {
   font-family: "popins";
 }
+
+.navbar-nav .nav-link {
+  padding: 10px 15px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar-nav .nav-link.active-tab {
+  background-color: rgba(0, 150, 255, 0.2);
+  color: #007bff;
+  font-weight: bold;
+}
+

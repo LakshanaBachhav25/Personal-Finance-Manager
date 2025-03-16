@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import { HouseDoor, ListCheck, BarChart, Wallet2 } from "react-bootstrap-icons";
@@ -9,7 +9,7 @@ import "./home.css";
 const NavbarComponent = ({ handleLogout }) => {
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName") || "User";
-  const [showName, setShowName] = useState(false);
+
 
   return (
     <nav className="navbar navbar-expand-lg bg-light shadow p-3">
@@ -53,23 +53,15 @@ const NavbarComponent = ({ handleLogout }) => {
                 <FaSignOutAlt className="me-2" /> Logout
               </button>
             </li>
+
             <li className="nav-item">
-              <div className="position-relative">
-                <FaUserCircle
-                  className="fs-2 text-secondary cursor-pointer"
-                  onMouseEnter={() => setShowName(true)}
-                  onMouseLeave={() => setShowName(false)}
-                />
-                {showName && (
-                  <div
-                    className="position-absolute bg-white text-dark p-2 rounded shadow fw-bold d-flex align-items-center"
-                    style={{ top: "40px", right: "0", whiteSpace: "nowrap", padding: "8px" }}
-                  >
-                    {userName}
-                  </div>
-                )}
-              </div>
+              <li className="nav-item d-flex align-items-center gap-2">
+                <FaUserCircle className="fs-2 text-secondary cursor-pointer" />
+                <span className="fw-bold text-dark">{userName}</span>
+              </li>
+
             </li>
+
           </ul>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React from "react";
 
 function EditFormModel({ showModal, selectedTransaction, setSelectedTransaction, handleUpdate, setShowModal }) {
-  if (!showModal || !selectedTransaction) return null; 
+  if (!showModal || !selectedTransaction) return null;
 
   return (
     <div className="modal-overlay d-flex justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50">
@@ -71,7 +71,7 @@ function EditFormModel({ showModal, selectedTransaction, setSelectedTransaction,
           </div>
 
           <div className="d-flex justify-content-end">
-            <button 
+            <button
               type="submit"
               className="btn btn-primary me-2"
               onClick={(e) => {

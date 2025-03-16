@@ -54,10 +54,11 @@ const Home = () => {
 
   return (
     <div className="container-fluid bg-white min-vh-100">
+
       <NavbarComponent handleLogout={() => navigate("/")} />
 
-      <div className="text-center my-4 text-primary">
-        <h3 className="fw-bold" style={{ margin: "40px 0", textAlign: "center", fontFamily: "Poppins" }}>
+      <div className="text-center my-4">
+        <h3 className="fw-bold" style={{ margin: "40px 0", textAlign: "center", fontFamily: "Poppins", color: "#6f42c1" }}>
           "Smart budgeting made simple - track, save, and grow!"
         </h3>
       </div>

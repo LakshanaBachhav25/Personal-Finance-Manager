@@ -52,7 +52,7 @@ const AddExpenseModal = ({ show, handleClose, fetchTransactions }) => {
 
   return (
     <>
-      {error && <p className="text-danger">{error}</p>}
+
       {show && <div className="modal-backdrop fade show"></div>}
       <div className={`modal ${show ? "d-block" : "d-none"}`} tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered">

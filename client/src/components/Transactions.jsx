@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import NavbarComponent from "./NavbarComponent";
+import Nav from "./Nav";
 import { getExpenses, deleteExpense, updateExpense } from "../services/api";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import EditFormModel from "./EditFormModel";
+import Sidebar from "./Sidebar";
 
 const Transactions = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const Transactions = () => {
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
 
   useEffect(() => {
     fetchTransactions();
@@ -99,84 +102,91 @@ const Transactions = () => {
 
   return (
     <>
-      <NavbarComponent handleLogout={handleLogout} />
-      <Container>
-        <h3 className="text-center my-4 fw-bold" style={{ color: "#6f42c1" }}>
-          "View and manage all your Transactions easily!"
-        </h3>
+      <Sidebar setSidebarOpen={setSidebarOpen} />
+      <Container fluid>
+        <div
+          className="content p-3"
+          style={{ marginLeft: "250px" }}
+        >
+          <Nav handleLogout={() => navigate("/")} />
+          <h3 className="text-center my-4 fw-bold" style={{ color: "#6f42c1" }}>
+            "View and manage all your Transactions easily!"
+          </h3>
 
-        <div className="d-flex justify-content-center mb-4 mt-4">
-          <select
-            className="form-select w-auto me-2 fw-bold"
-            value={transactionType}
-            onChange={(e) => setTransactionType(e.target.value)}
-          >
-            <option value="all">Show All</option>
-            <option value="Income">Show Income</option>
-            <option value="Expense">Show Expenses</option>
-          </select>
-          <select
-            className="form-select w-auto fw-bold"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="all">All Transactions</option>
-            <option value="lastWeek">Last Week</option>
-            <option value="lastMonth">Last Month</option>
-          </select>
-        </div>
+          <div className="d-flex justify-content-center mb-4 mt-4">
+            <select
+              className="form-select w-auto me-2 fw-bold"
+              value={transactionType}
+              onChange={(e) => setTransactionType(e.target.value)}
+            >
+              <option value="all">Show All</option>
+              <option value="Income">Show Income</option>
+              <option value="Expense">Show Expenses</option>
+            </select>
+            <select
+              className="form-select w-auto fw-bold"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="all">All Transactions</option>
+              <option value="lastWeek">Last Week</option>
+              <option value="lastMonth">Last Month</option>
+            </select>
+          </div>
 
-        <Table>
-          <thead className="table-dark">
-            <tr>
-              <th>Title</th>
-              <th>Amount</th>
-              <th>Category</th>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Description</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTransactions.map((t) => (
-              <tr key={t._id}>
-                <td>{t.title}</td>
-                <td>₹{t.amount}</td>
-                <td>{t.category}</td>
-                <td>{t.type}</td>
-                <td>{new Date(t.date).toLocaleDateString()}</td>
-                <td>{t.description}</td>
-                <td>
-                  <Button
-                    style={{ backgroundColor: "#F4B400", borderColor: "#F4B400", color: "white" }}
-                    size="sm"
-                    onClick={() => handleEdit(t)}
-                  >
-                    <FaEdit />
-                  </Button>
-                  <Button
-                    style={{ backgroundColor: "#E63946", borderColor: "#E63946", color: "white", marginLeft: "5px" }}
-                    size="sm"
-                    onClick={() => handleDelete(t._id)}
-                  >
-                    <FaTrash />
-                  </Button>
-                </td>
+          <Table responsive hover>
+            <thead className="table-dark">
+              <tr>
+                <th>Title</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-        <EditFormModel
-          showModal={showModal}
-          selectedTransaction={selectedTransaction}
-          setSelectedTransaction={setSelectedTransaction}
-          handleUpdate={handleUpdate}
-          setShowModal={setShowModal}
-        />
+            </thead>
+            <tbody>
+              {transactions.map((t) => (
+                <tr key={t._id}>
+                  <td>{t.title}</td>
+                  <td>₹{t.amount}</td>
+                  <td>{t.category}</td>
+                  <td>{t.type}</td>
+                  <td>{new Date(t.date).toLocaleDateString()}</td>
+                  <td>{t.description}</td>
+                  <td>
+                    <Button
+                      style={{ backgroundColor: "#F4B400", borderColor: "#F4B400", color: "white" }}
+                      size="sm"
+                      onClick={() => handleEdit(t)}
+                    >
+                      <FaEdit />
+                    </Button>
+                    <Button
+                      style={{ backgroundColor: "#E63946", borderColor: "#E63946", color: "white", marginLeft: "5px" }}
+                      size="sm"
+                      onClick={() => handleDelete(t._id)}
+                    >
+                      <FaTrash />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <EditFormModel
+            showModal={showModal}
+            selectedTransaction={selectedTransaction}
+            setSelectedTransaction={setSelectedTransaction}
+            handleUpdate={handleUpdate}
+            setShowModal={setShowModal}
+          />
+        </div>
       </Container>
     </>
   );
+
 };
 
 export default Transactions;
