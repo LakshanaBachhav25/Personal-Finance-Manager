@@ -147,7 +147,7 @@ const Transactions = () => {
               </tr>
             </thead>
             <tbody>
-              {transactions.map((t) => (
+              {filteredTransactions.map((t) => (
                 <tr key={t._id}>
                   <td>{t.title}</td>
                   <td>₹{t.amount}</td>
